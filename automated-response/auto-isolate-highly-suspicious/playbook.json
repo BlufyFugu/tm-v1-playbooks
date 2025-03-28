@@ -1,0 +1,155 @@
+{
+    "trigger_0f8a583ea5a24b698282afe560e97dcb": {
+        "id": "trigger_0f8a583ea5a24b698282afe560e97dcb",
+        "type": "trigger",
+        "actionType": "TRIGGER",
+        "properties": {
+            "trigger_type": "workbench_alert"
+        },
+        "flows": {
+            "incoming": [],
+            "outgoing": [
+                {
+                    "id": "target_4d02fbd56e3d4ed88f1fe4d248db6a2b"
+                }
+            ]
+        }
+    },
+    "target_4d02fbd56e3d4ed88f1fe4d248db6a2b": {
+        "id": "target_4d02fbd56e3d4ed88f1fe4d248db6a2b",
+        "type": "target",
+        "actionType": "WORKBENCH_ALERT",
+        "properties": {
+            "severity": [
+                "critical",
+                "high",
+                "medium",
+                "low"
+            ],
+            "models_enabled": false,
+            "models": [],
+            "verdict": true,
+            "create_case": true,
+            "case_owner": [
+                {
+                    "id": "4a1404f7-f98d-436d-b419-cceae9415197",
+                    "name": "Vision One User",
+                    "email": "user@email.domain"
+                }
+            ],
+            "close_case": false
+        },
+        "flows": {
+            "incoming": [
+                {
+                    "id": "trigger_0f8a583ea5a24b698282afe560e97dcb"
+                }
+            ],
+            "outgoing": [
+                {
+                    "id": "condition_bfb2f0adc8e6479bb0af058981b3c035"
+                }
+            ]
+        }
+    },
+    "condition_bfb2f0adc8e6479bb0af058981b3c035": {
+        "id": "condition_bfb2f0adc8e6479bb0af058981b3c035",
+        "type": "condition",
+        "actionType": "CONDITION",
+        "properties": {
+            "condition": {
+                "logicGate": "buf",
+                "operands": [
+                    {
+                        "source": "target_4d02fbd56e3d4ed88f1fe4d248db6a2b",
+                        "logicGate": "buf",
+                        "operands": [
+                            {
+                                "operator": "in",
+                                "key": "verdict_name",
+                                "value": [
+                                    "HighlySuspicious",
+                                    "Suspicious",
+                                    "Unrated"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "flows": {
+            "incoming": [
+                {
+                    "id": "target_4d02fbd56e3d4ed88f1fe4d248db6a2b"
+                }
+            ],
+            "outgoing": [
+                {
+                    "id": "action_a72b44232f6b4ab5a4fbe0d8f4e37c0a"
+                }
+            ]
+        }
+    },
+    "action_a72b44232f6b4ab5a4fbe0d8f4e37c0a": {
+        "id": "action_a72b44232f6b4ab5a4fbe0d8f4e37c0a",
+        "type": "action",
+        "actionType": "WORKBENCH_ACTION",
+        "properties": {
+            "responseActions": {
+                "general_action": [
+                    "block_object"
+                ],
+                "files": [
+                    "submit_to_sandbox",
+                    "collect_file"
+                ],
+                "url": [
+                    "submit_url_to_sandbox"
+                ]
+            },
+            "sources": [
+                "target_4d02fbd56e3d4ed88f1fe4d248db6a2b"
+            ]
+        },
+        "flows": {
+            "incoming": [
+                {
+                    "id": "condition_bfb2f0adc8e6479bb0af058981b3c035"
+                }
+            ],
+            "outgoing": [
+                {
+                    "id": "action_cbfd11898b5e424e99a2e7c40c958da0"
+                }
+            ]
+        }
+    },
+    "action_cbfd11898b5e424e99a2e7c40c958da0": {
+        "id": "action_cbfd11898b5e424e99a2e7c40c958da0",
+        "type": "action",
+        "actionType": "NOTIFICATION_EMAIL",
+        "properties": {
+            "subjectPrefix": "Vision One Playbook Execution",
+            "isExpandDetails": true,
+            "isExpandAlertDetails": true,
+            "recipients": [
+                "user@email.domain"
+            ],
+            "subject": "Vision One Playbook Execution Security Playbooks: %playbookName%",
+            "message": "================\nPlaybook: %playbookName%\n================\n\nExecution Results\n\nLast updated time: %lastUpdatedTime%\nDuration: %executionPeriod%\n\nFor more information, go to the Security Playbooks app on the Trend Vision One console:\n%executionPageURL%",
+            "messageTokens": [],
+            "sources": [
+                "action_a72b44232f6b4ab5a4fbe0d8f4e37c0a"
+            ]
+        },
+        "flows": {
+            "incoming": [
+                {
+                    "id": "action_a72b44232f6b4ab5a4fbe0d8f4e37c0a"
+                }
+            ],
+            "outgoing": []
+        }
+    }
+}
